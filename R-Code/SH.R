@@ -33,21 +33,22 @@ Missing <- gather(Missing, key = "variables", value = "percent_missing")
 AB$reviews_per_month = na_mean(AB$reviews_per_month)
 Missing
 
-# Data Vis ####
+#Data Vis ####
 ABC <- AB %>% select_if(is.numeric)
 ABC[ddd] <- NULL
 a_cor <- ABC[complete.cases(ABC), ]
 cor_a <- cor(a_cor, method = 'spearman') 
 corrplot(cor_a, method = 'ellipse', order = "AOE", diag = FALSE)
 
-
+#Histogram Latitude
 ggplot(AB, aes(latitude)) +
   geom_histogram(bins = 15, aes(y = ..density..), fill = "purple") + 
   geom_density(alpha = 0.2, fill = "purple") +
   ggtitle("Distribution of latitude")
   theme(axis.title = element_text(), axis.title.x = element_text()) +
   geom_vline(xintercept = round(mean(AB$latitude), 2), size = 2, linetype = 3)
-  
+
+#Histogram longitude  
 ggplot(AB, aes(longitude)) +
     geom_histogram(bins = 70, aes(y = ..density..), fill = "purple") + 
     geom_density(alpha = 0.2, fill = "purple") +
@@ -55,6 +56,7 @@ ggplot(AB, aes(longitude)) +
   theme(axis.title = element_text(), axis.title.x = element_text()) +
     geom_vline(xintercept = round(mean(AB$longitude), 2), size = 2, linetype = 3)
 
+#Boxplot Latitude
 ggplot(AB, aes(x = room_type, y = latitude)) +
   geom_boxplot(aes(fill = room_type)) + scale_y_log10() +
   xlab("Room type") + 
@@ -84,10 +86,10 @@ plot.psych(P_A)
 
 
 help("plot.psych")
-
 paa = as.data.frame(P_A$scores)    # Make a dataset
 paa$ID_dataset = ABC$id
 paa
 
+# Machine Learning ####
 fit = lm(y ~ x2 + x1, data=d)
 summary(fit)
