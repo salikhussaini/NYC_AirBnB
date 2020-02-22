@@ -4,9 +4,9 @@ library(tidyverse)
 library(psych)
 library(corrplot)
 library(imputeTS)
-library(ggfortify)
+library(ggfortify) #PCA plot biplot
 library(MASS)
-
+library(klaR) # LDA Plot
 
 #Data Cleaning ####
 AB <- read_csv("F:/Graduate/Depaul/Classes/DSC 424/datasets/AB_NYC_2019.csv")
@@ -67,7 +67,7 @@ ggplot(AB, aes(x = room_type, y = latitude)) +
   xlab("Room type") + 
   ylab("latitude") +
   ggtitle("Boxplots of latitude by room type",
-        subtitle = "Entire homes and apartments have the highest avg latitude") 
+        subtitle = "Shared Room highest avg latitude") 
 
 
 #Variable Selction ####  
@@ -103,9 +103,23 @@ LDA_B <- lda(AB$neighbourhood_group ~ AB$room_type + AB$price + AB$minimum_night
 print(LDA_B)
 
 help("plot.psych")
-paa = as.data.frame(P_A$scores)    # Make a dataset
+paa = as.data.frame(P_A$scores)    
+
+# Make a dataset
 paa$ID_dataset = ABC$id
 paa
+
+#LDA Cor- Plot Analysis
+LDAA <- as.data.frame(LDA_A)
+LDBB <- as.data.frame(LDA_B)
+plot.psych(cor(LDA_B))
+cor
+#Assesment into neighborhood group
+plot(LDA_B, sort = TRUE)
+plot.psych(LDA_B)
+
+plot(LDA_B$x[,1], LDA_B$x[,2])
+text(LDA_B$x[,1], LDA_B$x[,2], Type, cex = 0.7, pos = 4, col = "red")
 
 # Machine Learning ####
 fit = lm(y ~ x2 + x1, data=d)
