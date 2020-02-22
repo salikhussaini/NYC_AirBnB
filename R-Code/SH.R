@@ -1,7 +1,12 @@
+#Packages ####
 library(readr)
 library(tidyverse)
 library(psych)
 library(corrplot)
+library(imputeTS)
+library(ggfortify)
+library(MASS)
+
 
 #Data Cleaning ####
 AB <- read_csv("F:/Graduate/Depaul/Classes/DSC 424/datasets/AB_NYC_2019.csv")
@@ -26,16 +31,16 @@ AB[c("last_review")] <- AB[c("last_review")] %>% map(~lubridate::ymd(.x))
 glimpse(AB)
 
 #Missing Data
-install.packages("imputeTS")
-library(imputeTS)
 Missing <- AB %>% summarise_all(~(sum(is.na(.))/n()))
 Missing <- gather(Missing, key = "variables", value = "percent_missing")
 AB$reviews_per_month = na_mean(AB$reviews_per_month)
 Missing
 
-#Data Vis ####
+#Numeric
 ABC <- AB %>% select_if(is.numeric)
 ABC[ddd] <- NULL
+
+#Data Vis ####
 a_cor <- ABC[complete.cases(ABC), ]
 cor_a <- cor(a_cor, method = 'spearman') 
 corrplot(cor_a, method = 'ellipse', order = "AOE", diag = FALSE)
@@ -69,21 +74,26 @@ ggplot(AB, aes(x = room_type, y = latitude)) +
 str(ABC)
 summary(ABC)
 
+#PCA with Numerical variables only
 P_A <- principal(ABC, nfactors = 4, covar = TRUE)
 print(P_A)
 
-P_A <- principal(AB, nfactors = 4, covar = TRUE)
-print(P_A)
-
-help(principal)
-
 print(P_A$loadings, cutoff=.25)
-plot(P_A,)
+
+#PCA Cor- Plot Analysis
 plot.psych(cor(P_A))
 cor
 cor.plot(P_A, sort = TRUE)
 plot.psych(P_A)
 
+#PCA Plot Analysis
+biplot.psych(P_A)
+biplot(P_A)
+
+
+#LDA 
+LDA_A <- lda(AB$room_type ~ ., data = AB)
+print(LDA_A)
 
 help("plot.psych")
 paa = as.data.frame(P_A$scores)    # Make a dataset
