@@ -91,9 +91,16 @@ biplot.psych(P_A)
 biplot(P_A)
 
 
-#LDA 
-LDA_A <- lda(AB$room_type ~ ., data = AB)
+#LDA by Room Type
+AB <- as.data.frame(AB)
+LDA_A <- lda(AB$room_type ~ AB$latitude + AB$longitude + AB$neighbourhood_group + AB$availability_365
+             , data = AB)
 print(LDA_A)
+
+#LDA by Neighborhood group
+LDA_B <- lda(AB$neighbourhood_group ~ AB$room_type + AB$price + AB$minimum_nights 
+             + AB$availability_365, data = AB)
+print(LDA_B)
 
 help("plot.psych")
 paa = as.data.frame(P_A$scores)    # Make a dataset
